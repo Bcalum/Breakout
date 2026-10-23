@@ -23,10 +23,70 @@ void BrickManager::createBricks(int rows, int cols, float brickWidth, float bric
     }
 }
 
+// New Update function to control when the bullets are fired - Calum Brown
+void BrickManager::update(float dt)
+{
+	_fireTimer += dt;
+    if (_fireTimer >= BULLET_FIRE_RATE && !_bricks.empty())
+    {
+		_fireTimer = 0.0f;
+        fire();
+    }
+
+	sf::FloatRect paddleBounds = _gameManager->getPaddle()->getBounds();
+	float windowHeight = static_cast<float>(_window->getSize().y);
+
+
+	// Bullet Collision Detection and Update - Calum Brown
+    for (auto& bullet : _bullets)
+    {
+		bullet.update(dt);
+        if (bullet.getBounds().intersects(paddleBounds))
+        {
+            bullet.destroy();
+			_gameManager->loseLife();
+        }
+        else if (bullet.getBounds().top > windowHeight)
+        {
+            bullet.destroy();
+        }
+    }
+
+    _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(), [](const Bullet& bullet) { return !bullet.isAlive(); }), _bullets.end());
+}
+
+// New Fire function for the bricks to shoot bullets - Calum Brown
+void BrickManager::fire()
+{
+    std::vector<const Brick*> shooters;
+    for (const auto& a : _bricks)
+    {
+		bool blocked = false;
+        for (const auto& b : _bricks)
+        {
+            if (&a == &b) continue;
+            if (std::abs(a.getBounds().left - b.getBounds().left) < 1.f && b.getBounds().top > a.getBounds().top)
+            {
+                blocked = true;
+				break;
+            }
+        }
+		if (!blocked) shooters.push_back(&a);
+    }
+
+    if (shooters.empty()) return;
+
+	sf::Vector2f gunPosition = shooters[rand() % shooters.size()]->getGunPosition();
+	_bullets.emplace_back(gunPosition.x, gunPosition.y);
+}
+
 void BrickManager::render()
 {
     for (auto& brick : _bricks) {
         brick.render(*_window);
+    }
+    for (auto& bullet : _bullets) {
+		bullet.render(*_window);
     }
 }
 

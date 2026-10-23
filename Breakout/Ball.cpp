@@ -59,12 +59,17 @@ void Ball::update(float dt)
         _direction.y *= -1;
     }
 
-    // lose life bounce
-    if (position.y > windowDimensions.y)
+    //// lose life bounce
+    //if (position.y > windowDimensions.y)
+    //{
+    //    _sprite.setPosition(0, 300);
+    //    _direction = { 1, 1 };
+    //    _gameManager->loseLife();
+    //}
+
+    if (position.y >= windowDimensions.y - 2 * RADIUS && _direction.y > 0)
     {
-        _sprite.setPosition(0, 300);
-        _direction = { 1, 1 };
-        _gameManager->loseLife();
+		_direction.y *= -1;
     }
 
     // collision with paddle

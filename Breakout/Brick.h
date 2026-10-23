@@ -6,6 +6,7 @@ public:
     Brick(float x, float y, float width, float height);
     void render(sf::RenderWindow& window);
     sf::FloatRect getBounds() const;
+    sf::Vector2f getGunPosition() const;
 
 private:
     sf::RectangleShape _shape;
@@ -13,5 +14,5 @@ private:
 
     // New Gun Thing - may change this to an image of a glock later
     sf::RectangleShape _gun;
-    sf::Vector2f getGunPosition() const;
+
 };

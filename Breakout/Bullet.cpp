@@ -11,7 +11,7 @@ Bullet::Bullet(float x, float y) : _isAlive(true)
 
 void Bullet::update(float dt)
 {
-	_shape.move(0.f, -BULLET_SPEED * dt);
+	_shape.move(0.f, BULLET_SPEED * dt);
 }
 
 void Bullet::render(sf::RenderWindow& window)
