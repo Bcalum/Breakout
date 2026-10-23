@@ -16,11 +16,29 @@ namespace
 	const sf::Vector2f GUN_MUZZLE(254.f, 17.f);
 }
 
-Brick::Brick(float x, float y, float width, float height) : _isDestroyed(false)
+Brick::Brick(float x, float y, float width, float height, BrickType type) : _isDestroyed(false)
 {
+	_type = type;
     _shape.setPosition(x, y);
     _shape.setSize(sf::Vector2f(width, height));
-    _shape.setFillColor(sf::Color::Red);
+
+    switch (_type)
+    {
+    case BrickType::Normal: _shape.setFillColor(sf::Color::Red); break;
+        break;
+    case BrickType::Plain: _shape.setFillColor(sf::Color(120, 120, 120)); break;
+        break;
+    case BrickType::Split: _shape.setFillColor(sf::Color(160, 60, 200)); break;
+        break;
+    case BrickType::Big: _shape.setFillColor(sf::Color(255, 140, 0)); break;
+        break;
+    case BrickType::Repeat: _shape.setFillColor(sf::Color(0, 150, 255)); break;
+        break;
+    case BrickType::Dropper: _shape.setFillColor(sf::Color(60, 200, 80)); break;
+        break;
+    default:
+        break;
+    }
 
     // The Gun Stuff
 	_gun.setTexture(gunTexture());
@@ -33,13 +51,15 @@ void Brick::render(sf::RenderWindow& window)
 {
     if (!_isDestroyed) {
         window.draw(_shape);
-		window.draw(_gun);
+		if (hasGun()) window.draw(_gun);
     }
 }
 
 void Brick::aimAt(sf::Vector2f target)
 {
-    sf::Vector2f d = target - _gun.getPosition();
+    if (!hasGun()) return;
+
+    sf::Vector2f d = (_type == BrickType::Dropper) ? sf::Vector2f(0.f, 1.f) : target - _gun.getPosition();
 	float len = std::sqrt(d.x * d.x + d.y * d.y); 
     if (len < 1.f) return;
 
@@ -57,4 +77,19 @@ sf::Vector2f Brick::getGunPosition() const
 sf::FloatRect Brick::getBounds() const
 {
     return _shape.getGlobalBounds();
+}
+
+void Brick::queueFollowUp()
+{
+	_pendingShots = 1;
+    _burstTimer = REPEAT_DELAY;
+}
+
+bool Brick::tickBurst(float dt)
+{
+	if (_pendingShots <= 0) return false;
+	_burstTimer -= dt;
+    if (_burstTimer > 0.f) return false;
+    --_pendingShots;
+    return true;
 }

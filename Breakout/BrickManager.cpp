@@ -1,6 +1,15 @@
 #include "BrickManager.h"
 #include "GameManager.h"
 
+namespace 
+{
+    sf::Vector2f normalise(sf::Vector2f v)
+    {
+		float len = std::sqrt(v.x * v.x + v.y * v.y);
+		return len > 0.f ? v / len : sf::Vector2f(0.f, 1.f);
+    }
+}
+
 BrickManager::BrickManager(sf::RenderWindow* window, GameManager* gameManager)
     : _window(window), _gameManager(gameManager)
 {
@@ -18,9 +27,20 @@ void BrickManager::createBricks(int rows, int cols, float brickWidth, float bric
         for (int j = 0; j < cols; ++j) {
             float x = j * (brickWidth + spacing) + leftEdge;
             float y = i * (brickHeight + spacing) + TOP_PADDING;
-            _bricks.emplace_back(x, y, brickWidth, brickHeight);
+            _bricks.emplace_back(x, y, brickWidth, brickHeight, randomType());
         }
     }
+}
+
+BrickType BrickManager::randomType()
+{
+    int roll = rand() % 100;
+    if (roll < 20) return BrickType::Plain;
+    if (roll < 50) return BrickType::Normal;
+    if (roll < 62) return BrickType::Split;
+    if (roll < 74) return BrickType::Big;
+    if (roll < 87) return BrickType::Repeat;
+    return BrickType::Dropper;
 }
 
 // New Update function to control when the bullets are fired - Calum Brown
@@ -32,6 +52,7 @@ void BrickManager::update(float dt)
     for (auto& brick : _bricks)
     {
         brick.aimAt(paddleCenter);
+        if (brick.tickBurst(dt)) shoot(brick);
     }
 
 	_fireTimer += dt;
@@ -62,30 +83,54 @@ void BrickManager::update(float dt)
     _bullets.erase(std::remove_if(_bullets.begin(), _bullets.end(), [](const Bullet& bullet) { return !bullet.isAlive(); }), _bullets.end());
 }
 
-// New Fire function for the bricks to shoot bullets - Calum Brown
+// New Fire function to determine which bricks fire - Calum Brown
 void BrickManager::fire()
 {
-    std::vector<const Brick*> shooters;
-    for (const auto& a : _bricks)
-    {
-		bool blocked = false;
-        for (const auto& b : _bricks)
-        {
-            if (&a == &b) continue;
-            if (std::abs(a.getBounds().left - b.getBounds().left) < 1.f && b.getBounds().top > a.getBounds().top)
-            {
-                blocked = true;
-				break;
-            }
-        }
-		if (!blocked) shooters.push_back(&a);
-    }
+    std::vector<Brick*> shooters;
+    for (auto& brick : _bricks)
+        if (brick.hasGun()) shooters.push_back(&brick);
 
     if (shooters.empty()) return;
 
-	const Brick* shooter = shooters[rand() % shooters.size()];
-	sf::Vector2f aimPos = shooter->getGunPosition();
-	_bullets.emplace_back(aimPos.x, aimPos.y, shooter->getAimDirection());
+    Brick* shooter = shooters[rand() % shooters.size()];
+    shoot(*shooter);
+
+    if (shooter->getType() == BrickType::Repeat)
+        shooter->queueFollowUp();
+}
+
+// Shoot Function which fires a bullet in a specific way based on the brick type - Calum Brown
+void BrickManager::shoot(Brick& brick)
+{
+    sf::Vector2f muzzle = brick.getGunPosition();
+    sf::Vector2f dir = brick.getAimDirection();
+
+    switch (brick.getType())
+    {
+    case BrickType::Big:
+        _bullets.emplace_back(muzzle.x, muzzle.y, dir, BIG_SCALE);
+        break;
+
+    case BrickType::Split:
+    {
+        sf::FloatRect p = _gameManager->getPaddle()->getBounds();
+        sf::Vector2f centre(p.left + p.width / 2.0f, p.top + p.height / 2.0f);
+
+        for (float side : { -1.0f, 1.0f })
+        {
+            sf::Vector2f target(centre.x + side * SPLIT_OFFSET, centre.y);
+            sf::Vector2f d = normalise(target - muzzle);
+            _bullets.emplace_back(muzzle.x, muzzle.y, d);
+        }
+        break;
+    }
+    case BrickType::Normal:
+    case BrickType::Repeat:
+    case BrickType::Dropper:    
+    default:
+        _bullets.emplace_back(muzzle.x, muzzle.y, dir);
+        break;
+    }
 }
 
 void BrickManager::render()

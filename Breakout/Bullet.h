@@ -5,7 +5,7 @@
 class Bullet
 {
 public:
-	Bullet(float x, float y, sf::Vector2f direction);
+	Bullet(float x, float y, sf::Vector2f direction, float sizeScale = 1.0f);
 	void update(float dt);
 	void render(sf::RenderWindow& window);
 	sf::FloatRect getBounds() const;
