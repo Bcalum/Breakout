@@ -141,6 +141,7 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrickManager.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)/SFML/include</AdditionalIncludeDirectories>
@@ -160,6 +161,7 @@
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrickManager.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="CONSTANTS.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="MessagingSystem.h" />

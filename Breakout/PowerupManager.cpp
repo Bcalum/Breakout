@@ -64,6 +64,7 @@ void PowerupManager::spawnPowerup()
 
     float spawnX = xDist(_rng);
 
+	// CHANGE: Removed that darn FastBall powerup, some may say it was a skill issue - Calum B.
     switch (rand() % 4)
     {
     case 0:

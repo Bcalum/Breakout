@@ -19,7 +19,8 @@ constexpr const char* WINDOW_TITLE = "Game";
 // Paddle settings
 constexpr float PADDLE_WIDTH = 150.0f;
 constexpr float PADDLE_HEIGHT = 20.0f;
-constexpr float PADDLE_SPEED = 300.0f;
+// CHANGE: Paddle Speed increased from 300.0f to 500.0f preperation for bullet hell - Calum B.
+constexpr float PADDLE_SPEED = 500.0f;
 
 // Ball settings
 constexpr float BALL_RADIUS = 10.0f;
@@ -44,6 +45,13 @@ constexpr float UI_LIFE_PADDING = 20.0f;
 constexpr float PAUSE_TIME_BUFFER = 0.5f;
 constexpr float POWERUP_FREQUENCY = 7.5f;
 constexpr int INITIAL_LIVES = 3;
+
+// NEW
+// Bullet settings
+constexpr float BULLET_WIDTH = 6.0f;
+constexpr float BULLET_HEIGHT = 14.0f;
+constexpr float BULLET_SPEED = 300.0f;
+constexpr float BULLET_FIRE_RATE = 0.5f; 
 
 // Colour Palette
 const sf::Color ballEffectsColour = sf::Color(100, 100, 200, 255); // blue-ish?

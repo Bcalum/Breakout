@@ -10,4 +10,8 @@ public:
 private:
     sf::RectangleShape _shape;
     bool _isDestroyed;
+
+    // New Gun Thing - may change this to an image of a glock later
+    sf::RectangleShape _gun;
+    sf::Vector2f getGunPosition() const;
 };
