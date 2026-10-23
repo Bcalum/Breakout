@@ -7,12 +7,14 @@ public:
     void render(sf::RenderWindow& window);
     sf::FloatRect getBounds() const;
     sf::Vector2f getGunPosition() const;
+    sf::Vector2f getAimDirection() const { return _aimDir; }
+    void aimAt(sf::Vector2f target);
 
 private:
     sf::RectangleShape _shape;
     bool _isDestroyed;
 
-    // New Gun Thing - may change this to an image of a glock later
-    sf::RectangleShape _gun;
-
-};
+    // Gun Variables & Methods
+    sf::Sprite _gun;
+	sf::Vector2f _aimDir = { 0.f, 1.f };
+ };

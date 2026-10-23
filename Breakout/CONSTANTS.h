@@ -53,6 +53,8 @@ constexpr float BULLET_HEIGHT = 14.0f;
 constexpr float BULLET_SPEED = 300.0f;
 constexpr float BULLET_FIRE_RATE = 0.5f; 
 
+// Bullet Types
+
 // Colour Palette
 const sf::Color ballEffectsColour = sf::Color(100, 100, 200, 255); // blue-ish?
 const sf::Color paddleEffectsColour = sf::Color(255, 250, 205); // lemon chiffon -- very fancy.
