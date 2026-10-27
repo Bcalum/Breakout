@@ -40,6 +40,7 @@ _TO DO_
 ### Change log
 * 2025 - Naman made it harder
 * 2026 - William made it easier again
+* 2026 - Calum added it so the Bricks shoot back
 
 ---
 
