@@ -36,64 +36,50 @@ void Ball::update(float dt)
     if (_isFireBall)
     {
         // Flickering effect
-        int flicker = rand() % 50 + 205; // Random value between 205 and 255
-        _sprite.setFillColor(sf::Color(flicker, flicker / 2, 0)); // Orange flickering color
+        int flicker = rand() % 50 + 205;
+        _sprite.setFillColor(sf::Color(flicker, flicker / 2, 0));
     }
 
-    // Update position with a subtle floating-point error
     _sprite.move(_direction * _velocity * dt);
 
-    // check bounds and bounce
     sf::Vector2f position = _sprite.getPosition();
     sf::Vector2u windowDimensions = _window->getSize();
 
-    // bounce on walls
     if ((position.x >= windowDimensions.x - 2 * RADIUS && _direction.x > 0) || (position.x <= 0 && _direction.x < 0))
     {
         _direction.x *= -1;
     }
 
-    // bounce on ceiling
     if (position.y <= 0 && _direction.y < 0)
     {
         _direction.y *= -1;
     }
-
-    //// lose life bounce
-    //if (position.y > windowDimensions.y)
-    //{
-    //    _sprite.setPosition(0, 300);
-    //    _direction = { 1, 1 };
-    //    _gameManager->loseLife();
-    //}
 
     if (position.y >= windowDimensions.y - 2 * RADIUS && _direction.y > 0)
     {
 		_direction.y *= -1;
     }
 
-    // collision with paddle
+    // Paddle Collision - Calum Brown
     if (_sprite.getGlobalBounds().intersects(_gameManager->getPaddle()->getBounds()))
     {
-        _direction.y *= -1; // Bounce vertically
+        _direction.y *= -1;
 
         float paddlePositionProportion = (_sprite.getPosition().x - _gameManager->getPaddle()->getBounds().left) / _gameManager->getPaddle()->getBounds().width;
         _direction.x = paddlePositionProportion * 2.0f - 1.0f;
 
-        // Adjust position to avoid getting stuck inside the paddle
         _sprite.setPosition(_sprite.getPosition().x, _gameManager->getPaddle()->getBounds().top - 2 * RADIUS);
     }
 
-    // collision with bricks
     int collisionResponse = _gameManager->getBrickManager()->checkCollision(_sprite, _direction);
-    if (_isFireBall) return; // no collisisons when in fireBall mode.
+    if (_isFireBall) return;
     if (collisionResponse == 1)
     {
-        _direction.x *= -1; // Bounce horizontally
+        _direction.x *= -1;
     }
     else if (collisionResponse == 2)
     {
-        _direction.y *= -1; // Bounce vertically
+        _direction.y *= -1;
     }
 }
 

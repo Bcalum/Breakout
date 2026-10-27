@@ -22,6 +22,7 @@ Brick::Brick(float x, float y, float width, float height, BrickType type) : _isD
     _shape.setPosition(x, y);
     _shape.setSize(sf::Vector2f(width, height));
 
+    // Changing the Colour based on the Brick Type - Calum Brown
     switch (_type)
     {
     case BrickType::Normal: _shape.setFillColor(sf::Color::Red); break;
@@ -55,6 +56,7 @@ void Brick::render(sf::RenderWindow& window)
     }
 }
 
+// An aiming function for the gun on the brick to constantly aim at the paddle - Calum Brown
 void Brick::aimAt(sf::Vector2f target)
 {
     if (!hasGun()) return;
@@ -69,6 +71,7 @@ void Brick::aimAt(sf::Vector2f target)
     _gun.setScale(GUN_SCALE, d.x < 0 ? -GUN_SCALE : GUN_SCALE);
 }
 
+// Helper Functions - Calum Brown
 sf::Vector2f Brick::getGunPosition() const
 {
     return _gun.getTransform().transformPoint(GUN_MUZZLE);
@@ -85,6 +88,7 @@ void Brick::queueFollowUp()
     _burstTimer = REPEAT_DELAY;
 }
 
+// For the Repeat Brick - Calum Brown
 bool Brick::tickBurst(float dt)
 {
 	if (_pendingShots <= 0) return false;
