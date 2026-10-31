@@ -30,6 +30,8 @@ void GameManager::initialize()
 
 void GameManager::update(float dt)
 {
+    if (_shakeTimer > 0.f) _shakeTimer -= dt;
+
     _powerupInEffect = _powerupManager->getPowerupInEffect();
     _ui->updatePowerupText(_powerupInEffect);
     _powerupInEffect.second -= dt;
@@ -93,15 +95,28 @@ void GameManager::loseLife()
     _lives--;
     _ui->lifeLost(_lives);
 
-    // TODO screen shake.
+    _shakeTimer = SHAKE_DURATION;
 }
 
 void GameManager::render()
 {
+    sf::View view = _window->getDefaultView();
+    if (_shakeTimer > 0.f)
+    {
+        float strength = SHAKE_MAGNITUDE * (_shakeTimer / SHAKE_DURATION);
+
+        float offsetX = ((rand() % 2001) / 1000.0f - 1.0f) * strength;
+        float offsetY = ((rand() % 2001) / 1000.0f - 1.0f) * strength;
+        view.move(offsetX, offsetY);
+    }
+    _window->setView(view);
+
     _paddle->render();
     _ball->render();
     _brickManager->render();
     _powerupManager->render();
+
+    _window->setView(_window->getDefaultView());
     _window->draw(_masterText);
     _ui->render();
 }

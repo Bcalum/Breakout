@@ -32,6 +32,7 @@ private:
     float _pauseHold;
     float _time;
     float _timeLastPowerupSpawned;
+    float _shakeTimer = 0.0f;
     int _lives;
     bool _levelComplete;
     std::pair<POWERUPS, float> _powerupInEffect;

@@ -58,6 +58,9 @@ constexpr float SPLIT_OFFSET = 120.0f;
 constexpr float BIG_SCALE = 2.0f;
 constexpr float REPEAT_DELAY = 0.25f;
 
+// Screen Shake Settings
+constexpr float SHAKE_DURATION = 0.3f;
+constexpr float SHAKE_MAGNITUDE = 8.0f;
 
 // Colour Palette
 const sf::Color ballEffectsColour = sf::Color(100, 100, 200, 255); // blue-ish?
